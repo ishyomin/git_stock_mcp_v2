@@ -3,6 +3,7 @@
 주의: stdio 방식에서는 stdout이 통신 채널이라 print()를 쓰면 안 된다.
 """
 from mcp.server.mcpserver import MCPServer
+from call_log import logged
 
 import stock
 
@@ -10,6 +11,7 @@ mcp = MCPServer("stock-mcp-v2")
 
 
 @mcp.tool()
+@logged
 def get_price(ticker: str) -> dict:
     """종목의 최신 종가와 전일 대비 등락률(%)을 조회한다.
 
@@ -20,6 +22,7 @@ def get_price(ticker: str) -> dict:
 
 
 @mcp.tool()
+@logged
 def get_history(ticker: str, days: int = 20) -> dict:
     """최근 N 거래일의 일별 시세(시가·고가·저가·종가·거래량)와 기간 수익률(%)을 조회한다.
 
@@ -37,6 +40,7 @@ def get_history(ticker: str, days: int = 20) -> dict:
     return result
 
 @mcp.tool()
+@logged
 def analyze(ticker: str, days: int = 60) -> dict:
     """최근 N 거래일의 이동평균·추세·변동성·최대 낙폭을 조사한다. 거래일이 20일 미만이면 ValueError를 발생시킨다.
     5일, 20일 이동평균과 추세(상승, 하락 보합), 기간 수익률, 일별/연환산 변동성, 최대 낙폭(MDD)를 계산. 단위 %
