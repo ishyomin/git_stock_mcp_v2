@@ -1,3 +1,4 @@
 {"ts": "2026-11-19T23:40:29", "tool": "get_price", "args": {"ticker": "005930"}, "ok": true, "elapsed_ms": 2901.6}
 {"ts": "2026-11-19T23:40:33", "tool": "analyze", "args": {"ticker": "005930", "days": 5}, "ok": false, "error": "days는 20~250 사이여야 합니다.", "elapsed_ms": 0.0}
 {"ts": "2026-11-19T23:40:33", "tool": "get_history", "args": {"ticker": "005930", "days": 5}, "ok": true, "elapsed_ms": 155.1}
+{"ts": "2026-11-20T00:00:08", "tool": "market_microstructure", "args": {"ticker": "DEMO01", "window_sec": 60}, "ok": true, "elapsed_ms": 114.2}
