@@ -6,7 +6,8 @@ from mcp.server.mcpserver import MCPServer
 from call_log import logged
 
 import stock
-
+import microstructure
+import policy
 mcp = MCPServer("stock-mcp-v2")
 
 
@@ -52,6 +53,26 @@ def analyze(ticker: str, days: int = 60) -> dict:
         raise ValueError("days는 20~250 사이여야 합니다.")
     return stock.analyze(ticker, days)
 
+@mcp.tool()
+@logged
+def market_microstructure(ticker: str = "DEMO01", window_sec: int = 60) -> dict:
+    """가상 종목의 시장 미시구조 지표를 구간별로 조회한다.
+
+    원본 틱·호가(주문번호 포함)는 서버 밖으로 내보내지 않고, 반출 정책을 통과한
+    집계 지표만 제공한다(Compute-to-Data). 이벤트 20건 미만 구간은 숨긴다.
+
+    지표: n_new/n_cancel/n_trade(건수), cancel_ratio(취소/신규),
+    avg_spread(원), avg_obi·max_abs_obi(호가 불균형, -1~1, +면 매수 우위),
+    spoof_alerts(스푸핑 의심 주문 수. 확정이 아니라 추가 조사 대상).
+
+    Args:
+        ticker: 가상 종목 코드(DEMO01, DEMO02).
+        window_sec: 집계 구간(초). 60~3600.
+    """
+    policy.check_window(window_sec)
+    data = microstructure.load_dataset(ticker.strip().upper())
+    rows = microstructure.window_metrics(data, window_sec)
+    return policy.apply_policy(rows)
 
 if __name__ == "__main__":
     mcp.run()
